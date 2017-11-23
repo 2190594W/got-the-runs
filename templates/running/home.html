@@ -1,0 +1,25 @@
+{% extends 'running/base.html' %}
+{% load staticfiles %}
+{% load leaflet_tags %}
+
+	{% block title_block %}
+		- Home
+	{% endblock %}
+
+	{% block body_block %}
+		<div class="container-fluid">
+			{% leaflet_map "gpxmap" %}
+		</div>
+		<style>
+		    .leaflet-container {  /* all maps */
+		        width:  auto;
+		        height: 900px;
+		    }
+		</style>
+		<script type="text/javascript">
+		    window.addEventListener("map:init", function (e) {
+		        var detail = e.detail;
+		        L.marker([50.5, 30.5]).addTo(detail.map);
+		    }, false);
+		</script>
+	{% endblock %}

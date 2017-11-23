@@ -8,13 +8,14 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
-from config import *
+# from config import *
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
 MEDIA_DIR = os.path.join(BASE_DIR, 'media')
+SECRET_KEY = ".aw~ac_FkSpD'qQN4sLr~1<dsCF%'jxwgyag+GF:kg!@Y.k;^*I&5^$%M]+>0`v"
 
 
 # Quick-start development settings - unsuitable for production
@@ -35,9 +36,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'social_django',
+    'bootstrap_toolkit',
     'validators',
-    'policy_tracker_app',
+    'running_app',
+    'leaflet',
+    'djgeojson',
+    'gpxpy',
 ]
 
 MIDDLEWARE = [
@@ -50,7 +56,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'policy_tracker_project.urls'
+ROOT_URLCONF = 'running_project.urls'
 
 TEMPLATES = [
     {
@@ -59,17 +65,20 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.contrib.auth.context_processors.auth',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
-		        'django.template.context_processors.media',
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'policy_tracker_project.wsgi.application'
+WSGI_APPLICATION = 'running_project.wsgi.application'
 
 
 # Database
@@ -85,9 +94,9 @@ DATABASES = {
 # Password hashing functions
 # https://docs.djangoproject.com/en/1.9/topics/auth/passwords/#how-django-stores-passwords
 PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.Argon2PasswordHasher',
     'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
     'django.contrib.auth.hashers.BCryptPasswordHasher',
-    'django.contrib.auth.hashers.Argon2PasswordHasher',
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
     'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
 ]
@@ -156,6 +165,14 @@ SOCIAL_AUTH_PIPELINE = (
 # Social Authentication Redirect
 
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = "/"
+
+LEAFLET_CONFIG = {
+    'TILES': [('Watercolor', 'http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg', {'attribution': ''}),
+              ('Standard', 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {'attribution': ''})],
+    'MIN_ZOOM': 3,
+    'MAX_ZOOM': 18,
+    'CENTER': [55.873753, -4.292492],
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/

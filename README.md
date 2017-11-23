@@ -22,7 +22,7 @@ Run the following command to install the correct dependencies:
 pip install -r requirements.txt
 ```
 
-### After the module has been installed you need to download the config.pyc file provided via Slack (or other means) and place it in the policy_tracker_project directory next to the settings.pyc file. This config file is vital in providing the correct credentials for OAuth2 configuration as it provides the application keys and secrets from Google, Facebook, Twitter and GitHub.
+### After the module has been installed you need to download the config.pyc file provided via Slack (or other means) and place it in the running_project directory next to the settings.pyc file. This config file is vital in providing the correct credentials for OAuth2 configuration as it provides the application keys and secrets from Google, Facebook, Twitter and GitHub.
 
 With the `config.pyc` file in the correct location, you can safely run the application with:
 
