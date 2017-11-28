@@ -3,7 +3,7 @@
 {% load running_app_template_tags %}
 {% load leaflet_tags %}
 
-<html>
+<html style="height: 100%;">
   <head lang="en">
     <meta charset="UTF-8" />
     <title>
@@ -15,24 +15,23 @@
     {% leaflet_js %}
     {% leaflet_css %}
   </head>
-  <body>
+  <body style="height: 100%;">
     {% include 'running/navbar.html' %}
-    <div style="margin-top: 77px;">
+    <div style="height: 100%;">
       {% block body_block %}
         This is body_block's default content.
       {% endblock %}
     </div>
-    <br/>
-    <hr />
-    <div style="bottom: 0; margin-bottom: 20px;">
-      {% include 'running/footer.html' %}
-    </div>
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'stylesheets/bootstrap-social.css' %}">
     <link rel="stylesheet" href="{% static 'stylesheets/app.css' %}">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://domoritz.github.io/leaflet-locatecontrol/dist/L.Control.Locate.min.css" />
+
     <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.3.1/gpx.min.js"></script>
+    <script src="https://domoritz.github.io/leaflet-locatecontrol/dist/L.Control.Locate.min.js" charset="utf-8"></script>
   </body>
 </html>

@@ -1,15 +1,15 @@
 {% load staticfiles %}
 
-<nav class="navbar fixed-top navbar-toggleable-md navbar-light bg-faded navbar-override" style="background-color: rgba(0,0,0,0)">
+<nav class="navbar fixed-top navbar-toggleable-md navbar-light bg-faded navbar-override" style="background-color: rgba(0,0,0,0); left: 4%; right: 4%; top: 1%;">
   <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" style="margin-top: 15px;">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <a class="navbar-brand" href="{% url 'home' %}" style="padding: 0 1rem; border-right: 1px solid gray;">
-		<img src="{% static '/images/GotTheRunsLogo.png' %}" width="150" height="75" class="d-inline-block align-top" alt="">
+  <a class="navbar-brand" href="{% url 'home' %}" style="padding: 0 1rem;">
+		<img src="{% static '/images/GotTheRunsLogo.png' %}" width="150" class="d-inline-block align-top" alt="">
 	</a>
 
   <div class="collapse navbar-collapse text-center" id="navbarSupportedContent" style="font-size: 150%;">
-    <ul class="navbar-nav mr-auto">
+    <!-- <ul class="navbar-nav mr-auto">
       <li class="nav-item">
         <a class="nav-link {% if nbar == 'countries' %}active{% endif %}" href="#">Countries<span class="sr-only">(current)</span></a>
       </li>
@@ -19,13 +19,16 @@
       <li class="nav-item">
         <a class="nav-link {% if nbar == 'news' %}active{% endif %}" href="{% url 'news' %}">News</a>
       </li>
-    </ul>
-    <ul class="navbar-nav ml-auto">
+    </ul> -->
+    <ul class="navbar-nav ml-auto" style="margin-right: 5%;">
 			{% if not user.is_authenticated %}
 				<li class="nav-item">
 	        <a class="nav-link" href="{% url 'login' %}">Login</a>
 	      </li>
 			{% else %}
+            <li class="nav-item">
+                <a class="nav-link {% if nbar == 'profile' %}active{% endif %}" href="#">Runs</a>
+            </li>
 			<li class="nav-item">
 				<a class="nav-link {% if nbar == 'profile' %}active{% endif %}" href="{% url 'profile_settings' %}">Profile</a>
 			</li>

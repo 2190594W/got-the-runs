@@ -7,19 +7,47 @@
 	{% endblock %}
 
 	{% block body_block %}
-		<div class="container-fluid">
+		<div class="container-fluid" style="padding: 0; height: 100%;">
 			{% leaflet_map "gpxmap" %}
+			<div id="track_summary" style="display: none; margin-top: -12%; margin-left: 75%; z-index: 423214; position: absolute; background-color: #FFF; border-radius: 5px; padding: 10px 20px; box-shadow: 3px 3px 20px #888888;">
+				<p id="track_name"></p>
+				<p id="track_distance"></p>
+				<p id="total_speed"></p>
+				<p id="avg_cadence"></p>
+			</div>
 		</div>
 		<style>
 		    .leaflet-container {  /* all maps */
 		        width:  auto;
-		        height: 900px;
+		        height: 100%;
 		    }
 		</style>
 		<script type="text/javascript">
+			function kFormatter(num) {
+	    		return num > 999 ? (num/1000).toFixed(2) + "km" : num + "m"
+			}
 		    window.addEventListener("map:init", function (e) {
 		        var detail = e.detail;
-		        L.marker([50.5, 30.5]).addTo(detail.map);
+				L.control.locate().addTo(detail.map);
+				{% if user.is_authenticated %}
+					var gpx = 'media/gpx_files/A.gpx'; // URL to your GPX file or the GPX itself
+					new L.GPX(gpx, {
+						async: true,
+						marker_options: {
+					    startIconUrl: 'static/images/pin-icon-start.png',
+					    endIconUrl: 'static/images/pin-icon-end.png',
+					    shadowUrl: 'static/images/pin-shadow.png'
+					  }
+					}).on('loaded', function(e) {
+					  	detail.map.fitBounds(e.target.getBounds());
+						document.getElementById('track_summary').style.display = 'table';
+						document.getElementById('track_name').innerHTML = "Track Name: " + e.target.get_name();
+						document.getElementById('track_distance').innerHTML = "Track Distance: " + kFormatter(e.target.get_distance()) + " (" + e.target.get_distance_imp().toFixed(2) + "miles)";
+						document.getElementById('total_speed').innerHTML = "Track Speed: " + e.target.get_total_speed().toFixed(2) + "km/h (" + e.target.get_total_speed_imp().toFixed(2) + "mph)";
+					}).addTo(detail.map);
+				{% else %}
+					// detail.map.locate({setView: true, maxZoom: 16});
+				{% endif %}
 		    }, false);
 		</script>
 	{% endblock %}

@@ -8,7 +8,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
-# from config import *
+from .config import *
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -171,7 +171,9 @@ LEAFLET_CONFIG = {
               ('Standard', 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {'attribution': ''})],
     'MIN_ZOOM': 3,
     'MAX_ZOOM': 18,
-    'CENTER': [55.873753, -4.292492],
+    'DEFAULT_CENTER': [55.873753, -4.292492],
+    'DEFAULT_ZOOM': 15,
+    'RESET_VIEW': False,
 }
 
 # Internationalization
