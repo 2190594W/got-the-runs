@@ -49,7 +49,6 @@
 
 .navbar-override {
   padding: 0 5rem 0 0;
-  border: 1px solid gray;
 }
 
 @media (min-width: 1920px) {
@@ -116,7 +115,7 @@
 }
 
 .ml-auto .nav-item {
-  margin: 0 7%;
+  margin: 0 9% 0 7%;
 }
 
 .active {
