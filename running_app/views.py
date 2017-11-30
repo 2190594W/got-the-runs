@@ -19,29 +19,11 @@ def home(request):
             user_profile = UserProfile.objects.get(user=user)
         except UserProfile.DoesNotExist:
             user_profile = None
-        try:
-            if user_profile is not None:
-                gpx_files = GpxFile.objects.filter(user_profile=user_profile)
-            else:
-                gpx_files = None
-            logins = user.social_auth.filter(user_id=user.id)
-            for i in range(0, len(logins)):
-                auth_provider = logins[i]
-                if i < (len(logins) - 2):
-                    auth_providers.append(auth_provider.provider + ",")
-                else:
-                    auth_providers.append(auth_provider.provider)
-            if len(auth_providers) > 1:
-                auth_providers.insert((len(auth_providers) - 1), "and")
-                auth_providers.append("accounts.")
-            else:
-                auth_providers.append("account.")
-            auth_providers = [provider.replace('google-oauth2', 'Google').replace('f', 'F').replace('tw', 'Tw').replace('gi', 'Gi') for provider in auth_providers]
-        except UserSocialAuth.DoesNotExist:
-            auth_providers = None
-
+        if user_profile is not None:
+            gpx_files = GpxFile.objects.filter(user_profile=user_profile)
+        else:
+            gpx_files = None
         context_dict = {
-            'logins': auth_providers,
             'gpx_files': gpx_files,
         }
 
@@ -51,9 +33,34 @@ def home(request):
     visitor_cookie_handler(request)
     context_dict['visits'] = request.session['visits']
     context_dict['last_visit'] = request.session['last_visit']
-    # context_dict['colors'] = ['#ec1b5a', '#314190', '#7d5d81', '#2d2366', '#f4bf42']
 
     return render(request, 'running/home.html', context_dict)
+
+
+def suggestions(request):
+    user = request.user
+    if user.is_authenticated():
+        auth_providers = []
+        try:
+            user_profile = UserProfile.objects.get(user=user)
+        except UserProfile.DoesNotExist:
+            user_profile = None
+        if user_profile is not None:
+            gpx_files = GpxFile.objects.exclude(user_profile=user_profile)
+        else:
+            gpx_files = None
+        context_dict = {
+            'gpx_files': gpx_files,
+        }
+
+    else:
+        return render(request, 'running/home.html', {})
+
+    visitor_cookie_handler(request)
+    context_dict['visits'] = request.session['visits']
+    context_dict['last_visit'] = request.session['last_visit']
+
+    return render(request, 'running/suggestions.html', context_dict)
 
 
 def upload(request):

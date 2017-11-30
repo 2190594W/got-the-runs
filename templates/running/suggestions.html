@@ -1,7 +1,7 @@
 {% extends 'running/base.html' %}
 {% load staticfiles %}
 {% load leaflet_tags %}
-{% block title_block %} - Home {% endblock %} {% block body_block %}
+{% block title_block %} - Suggestions {% endblock %} {% block body_block %}
 <script type="text/javascript" src="../../static/javascript/jquery.leanModal.min.js"></script>
 <div id="wrapper" style="height: 100%;">
 	<div class="overlay" data-toggle="offcanvas" style="cursor: pointer;"></div>
@@ -21,27 +21,24 @@
 			<li>
 				<a href="{% url 'about' %}">About</a>
 			</li>
-			<li>
-				<a href="{% url 'suggestions' %}">Suggest new Runs</a>
-			</li>
 			<li class="dropdown">
-				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Runs<span class="caret"></span></a>
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Suggested Runs<span class="caret"></span></a>
 				<ul class="dropdown-menu" role="menu" style="margin-bottom: 10px">
 					{% if user.is_authenticated %}
-						<li class="dropdown-header">Last 5 Runs Uploaded</li>
+						<li class="dropdown-header">5 Run Suggestions</li>
 						{% if gpx_files %}
 							{% for gpx in gpx_files %}
 								<li><a href="#" id="gpx{{forloop.counter}}">Run {{forloop.counter}}</a></li>
 								<script>
 									window.addEventListener("map:init", function(e) {
 										var detail = e.detail;
-										var gpx = 'media/{{ gpx.gpx_file }}'; // URL to your GPX file or the GPX itself
+										var gpx = '/media/{{ gpx.gpx_file }}'; // URL to your GPX file or the GPX itself
 										new L.GPX(gpx, {
 											async: true,
 											marker_options: {
-												startIconUrl: 'static/images/pin-icon-start.png',
-												endIconUrl: 'static/images/pin-icon-end.png',
-												shadowUrl: 'static/images/pin-shadow.png'
+												startIconUrl: '/static/images/pin-icon-start.png',
+												endIconUrl: '/static/images/pin-icon-end.png',
+												shadowUrl: '/static/images/pin-shadow.png'
 											},
 											polyline_options: {weight: 5, color: "{% cycle 'rgba(236, 27, 90, 0.8)' 'rgba(49, 65, 144, 0.8)' 'rgba(125, 93, 129, 0.8)' 'rgba(45, 35, 102, 0.8)' 'rgba(1, 168, 21, 0.8)' %}"}
 										}).on('loaded', function(e) {
