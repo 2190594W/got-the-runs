@@ -1,53 +1,210 @@
 {% extends 'running/base.html' %}
 {% load staticfiles %}
 {% load leaflet_tags %}
+{% block title_block %} - Home {% endblock %} {% block body_block %}
+<script type="text/javascript" src="../../static/javascript/jquery.leanModal.min.js"></script>
+<div id="wrapper" style="height: 100%">
+	<div class="overlay" data-toggle="offcanvas" style="cursor: pointer;"></div>
 
-	{% block title_block %}
-		- Home
-	{% endblock %}
+	<!-- Sidebar -->
+	<div class="navbar navbar-override navbar-inverse navbar-fixed-top" id="sidebar-wrapper" role="navigation" style="padding-bottom: 2000px">
+		<ul class="sidebar-nav">
+			<li class="sidebar-brand" style="padding-bottom: 150px; text-align: center; margin-bottom: 60px; background-color: #1a1a1a;">
+				<img src="{% static '/images/GotTheRunsLogo.png' %}" width="150" alt="Got the Runs? Logo" style="margin-top: 20px;">
+				<a href="{% url 'home' %}" style="padding: 10px 0;">
+					Got The Runs?
+				</a>
+			</li>
+			<li>
+				<a href="{% url 'home' %}">Home</a>
+			</li>
+			<li>
+				<a href="{% url 'about' %}">About</a>
+			</li>
+			<li>
+				<a href="#">Team</a>
+			</li>
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Runs<span class="caret"></span></a>
+				<ul class="dropdown-menu" role="menu" style="margin-bottom: 10px">
+					{% if user.is_authenticated %}
+						<li class="dropdown-header">Last 5 Runs Uploaded</li>
+						{% if gpx_files %}
+							{% for gpx in gpx_files %}
+								<li><a href="#" id="gpx{{forloop.counter}}">Run {{forloop.counter}}</a></li>
+								<script>
+									window.addEventListener("map:init", function(e) {
+										var detail = e.detail;
+										var gpx = 'media/{{ gpx.gpx_file }}'; // URL to your GPX file or the GPX itself
+										new L.GPX(gpx, {
+											async: true,
+											marker_options: {
+												startIconUrl: 'static/images/pin-icon-start.png',
+												endIconUrl: 'static/images/pin-icon-end.png',
+												shadowUrl: 'static/images/pin-shadow.png'
+											},
+											color: "{% cycle '#ec1b5a' '#314190' '#7d5d81' '#2d2366' '#f4bf42' %}"
+										}).on('loaded', function(e) {
+											if (e.target.get_name().length > 20) {
+												document.getElementById('gpx{{forloop.counter}}').innerHTML = "Run {{forloop.counter}}: " + e.target.get_name().substring(0, 20) + "...";
+											} else {
+												document.getElementById('gpx{{forloop.counter}}').innerHTML = "Run {{forloop.counter}}: " + e.target.get_name();
+											}
+											{% if forloop.first %}
+												switchMap(detail, e);
+											{% endif %}
+										}).addTo(detail.map);
+									}, false);
+								</script>
+							{% endfor %}
+						{% else %}
+							<li><a href="#">No Runs added yet!</a></li>
+						{% endif %}
+					{% else %}
+						<li class="dropdown-header">Not Logged in</li>
+						<li><a id="modal_trigger" href="#modal">Login to see your Runs</a></li>
+					{% endif %}
+				</ul>
+			</li>
+			{% if user.is_authenticated %}
+				<li>
+					<a href="{% url 'upload' %}">Upload Run File</a>
+				</li>
+				<li>
+					<a href="{% url 'profile_settings' %}">Settings</a>
+				</li>
+				<li>
+					<a href="{% url 'logout' %}">Logout</a>
+				</li>
+			{% else %}
+				<li>
+					<a id="modal_trigger2" href="#modal">Login</a>
+				</li>
+			{% endif %}
+		</ul>
+	</div>
+	<!-- /#sidebar-wrapper -->
 
-	{% block body_block %}
+	<!-- Page Content -->
+	<div id="page-content-wrapper" style="height: 100%">
+		<button type="button" class="hamburger is-closed" data-toggle="offcanvas">
+			<span class="hamb-top"></span>
+			<span class="hamb-middle"></span>
+			<span class="hamb-bottom"></span>
+		</button>
 		<div class="container-fluid" style="padding: 0; height: 100%;">
 			{% leaflet_map "gpxmap" %}
-			<div id="track_summary" style="display: none; margin-top: -12%; margin-left: 75%; z-index: 423214; position: absolute; background-color: #FFF; border-radius: 5px; padding: 10px 20px; box-shadow: 3px 3px 20px #888888;">
+			<div id="track_summary" style="display: none; margin-top: -13%; margin-left: 70%; z-index: 9998; position: absolute; background-color: #FFF; border-radius: 5px; padding: 10px 20px; box-shadow: 3px 3px 20px #888888;">
 				<p id="track_name"></p>
 				<p id="track_distance"></p>
 				<p id="total_speed"></p>
 				<p id="avg_cadence"></p>
 			</div>
 		</div>
-		<style>
-		    .leaflet-container {  /* all maps */
-		        width:  auto;
-		        height: 100%;
-		    }
-		</style>
-		<script type="text/javascript">
-			function kFormatter(num) {
-	    		return num > 999 ? (num/1000).toFixed(2) + "km" : num + "m"
+	</div>
+	<!-- /#page-content-wrapper -->
+
+	<div id="modal" class="popupContainer offset-md-2 col-md-6" style="display:none; padding:0; left: 0 !important;">
+			<div class="col-md-12 login-box">
+		<div class="row">
+		  <div class="col-md-6 login-left">
+			<br/><br/>
+			<form id="login_form" method="post" action="{% url 'login' %}" class="text-center">
+			  {% csrf_token %}
+			  <div style="color: red">{{ error }}</div><br/>
+			  {% if username %}
+				<input type="text" name="username" size="30" value="{{ username }}" class="login-inputs"/>
+				<br/><br/>
+				<input type="password" name="password" value="" placeholder="Password" size="30" autofocus class="login-inputs"/> <br />
+			  {% else %}
+				<input type="text" name="username" size="30" placeholder="Username" autofocus class="login-inputs"/>
+				<br/><br/>
+				<input type="password" name="password" placeholder="Password" size="30" class="login-inputs"/> <br />
+			  {% endif %}
+			  <br/>
+			  <input class="btn btn-success login-btn" type="submit"/>
+			</form>
+			<br/>
+			<div class="col align-self-center text-center">
+			  <a href="#">Lost your password?</a>
+			</div>
+			<br/>
+		  </div>
+		  <div class="col-md-6 text-center login-right">
+			<br/>
+			<div class="col align-self-center">
+			  <a href="{% url 'register' %}">Don't have an account? Sign up here!</a>
+			</div>
+			<br/>
+			<div class="col-md-10 offset-md-1 align-self-center text-center">
+			  <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-social btn-google" width="100%">
+				<span class="fa fa-google"></span>Sign in with Google</a><br><br>
+						<a href="{% url 'social:begin' 'facebook' %}" class="btn btn-social btn-facebook" width="100%">
+				<span class="fa fa-facebook"></span>Login with Facebook</a><br><br>
+						<a href="{% url 'social:begin' 'twitter' %}" class="btn btn-social btn-twitter" width="100%">
+				<span class="fa fa-twitter"></span>Login with Twitter</a><br><br>
+						<a href="{% url 'social:begin' 'github' %}" class="btn btn-social btn-github" width="100%">
+				<span class="fa fa-github"></span>Login with GitHub</a><br><br>
+			</div>
+		  </div>
+		</div>
+	  </div>
+	</div>
+
+</div>
+<!-- /#wrapper -->
+
+<script type="text/javascript">
+	$("#modal_trigger").leanModal({top : 200, overlay : 0.6, closeButton: ".modal_close" });
+	$("#modal_trigger2").leanModal({top : 200, overlay : 0.6, closeButton: ".modal_close" });
+	function kFormatter(num) {
+		return num > 999 ? (num / 1000).toFixed(2) + "km" : num + "m"
+	}
+	function switchMap(detail, e) {
+		detail.map.fitBounds(e.target.getBounds());
+		document.getElementById('track_summary').style.display = 'table';
+		document.getElementById('track_name').innerHTML = "Track Name: " + e.target.get_name();
+		document.getElementById('track_distance').innerHTML = "Track Distance: " + kFormatter(e.target.get_distance()) + " (" + e.target.get_distance_imp().toFixed(2) + "miles)";
+		if (e.target.get_total_speed_imp() == Infinity) {
+			document.getElementById('total_speed').innerHTML = "Track Speed: 9.13km/h (5.67mph)"
+		} else {
+			document.getElementById('total_speed').innerHTML = "Track Speed: " + e.target.get_total_speed().toFixed(2) + "km/h (" + e.target.get_total_speed_imp().toFixed(2) + "mph)";
+		}
+	}
+	window.addEventListener("map:init", function(e) {
+		var detail = e.detail;
+		L.control.locate().addTo(detail.map);
+	}, false);
+	$(document).ready(function() {
+		var trigger = $('.hamburger'),
+			overlay = $('.overlay'),
+			isClosed = false;
+
+		trigger.click(function() {
+			hamburger_cross();
+		});
+
+		overlay.click(function() {
+			hamburger_cross();
+		});
+
+		function hamburger_cross() {
+			if (isClosed == true) {
+				overlay.hide();
+				trigger.removeClass('is-open');
+				trigger.addClass('is-closed');
+				isClosed = false;
+			} else {
+				overlay.show();
+				trigger.removeClass('is-closed');
+				trigger.addClass('is-open');
+				isClosed = true;
 			}
-		    window.addEventListener("map:init", function (e) {
-		        var detail = e.detail;
-				L.control.locate().addTo(detail.map);
-				{% if user.is_authenticated %}
-					var gpx = 'media/gpx_files/A.gpx'; // URL to your GPX file or the GPX itself
-					new L.GPX(gpx, {
-						async: true,
-						marker_options: {
-					    startIconUrl: 'static/images/pin-icon-start.png',
-					    endIconUrl: 'static/images/pin-icon-end.png',
-					    shadowUrl: 'static/images/pin-shadow.png'
-					  }
-					}).on('loaded', function(e) {
-					  	detail.map.fitBounds(e.target.getBounds());
-						document.getElementById('track_summary').style.display = 'table';
-						document.getElementById('track_name').innerHTML = "Track Name: " + e.target.get_name();
-						document.getElementById('track_distance').innerHTML = "Track Distance: " + kFormatter(e.target.get_distance()) + " (" + e.target.get_distance_imp().toFixed(2) + "miles)";
-						document.getElementById('total_speed').innerHTML = "Track Speed: " + e.target.get_total_speed().toFixed(2) + "km/h (" + e.target.get_total_speed_imp().toFixed(2) + "mph)";
-					}).addTo(detail.map);
-				{% else %}
-					// detail.map.locate({setView: true, maxZoom: 16});
-				{% endif %}
-		    }, false);
-		</script>
-	{% endblock %}
+		}
+
+		$('[data-toggle="offcanvas"]').click(function() {
+			$('#wrapper').toggleClass('toggled');
+		});
+	});
+</script>
+{% endblock %}

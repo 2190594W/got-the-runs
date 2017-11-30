@@ -7,7 +7,8 @@ from django.contrib.auth.decorators import login_required
 from datetime import datetime
 
 from social_django.models import UserSocialAuth
-from running_app.forms import UserForm, UserProfileForm
+from running_app.models import GpxFile, UserProfile
+from running_app.forms import UserForm, UserProfileForm, GpxForm
 
 
 def home(request):
@@ -15,6 +16,14 @@ def home(request):
     if user.is_authenticated():
         auth_providers = []
         try:
+            user_profile = UserProfile.objects.get(user=user)
+        except UserProfile.DoesNotExist:
+            user_profile = None
+        try:
+            if user_profile is not None:
+                gpx_files = GpxFile.objects.filter(user_profile=user_profile)
+            else:
+                gpx_files = None
             logins = user.social_auth.filter(user_id=user.id)
             for i in range(0, len(logins)):
                 auth_provider = logins[i]
@@ -33,6 +42,7 @@ def home(request):
 
         context_dict = {
             'logins': auth_providers,
+            'gpx_files': gpx_files,
         }
 
     else:
@@ -41,8 +51,39 @@ def home(request):
     visitor_cookie_handler(request)
     context_dict['visits'] = request.session['visits']
     context_dict['last_visit'] = request.session['last_visit']
+    # context_dict['colors'] = ['#ec1b5a', '#314190', '#7d5d81', '#2d2366', '#f4bf42']
 
     return render(request, 'running/home.html', context_dict)
+
+
+def upload(request):
+    if not request.user.is_authenticated:
+        return render(request, 'running/home.html', {})
+    else:
+        uploaded = False
+
+        if request.method == 'POST':
+            user = request.user
+            user_profile = UserProfile.objects.get_or_create(user=user)[0]
+            gpx_form = GpxForm(data=request.POST)
+
+            if gpx_form.is_valid() and 'gpx_file' in request.FILES:
+                user_profile.save()
+
+                gpx = gpx_form.save(commit=False)
+                gpx.user_profile = user_profile
+                gpx.gpx_file = request.FILES['gpx_file']
+
+                gpx.save()
+
+                uploaded = True
+            else:
+                print(gpx_form.errors)
+        else:
+            gpx_form = GpxForm()
+        context_dict = {'gpx_form': gpx_form, 'uploaded': uploaded}
+        return render(request, 'running/upload.html', context_dict)
+
 
 def about(request):
     context_dict = {'author': "Chris Watson - 2190594W"}

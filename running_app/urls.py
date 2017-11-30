@@ -12,6 +12,7 @@ urlpatterns = [
 	url(r'^faq/$', views.faq, name='faq'),
 	url(r'^news/$', views.news, name='news'),
 	url(r'^register/$', views.register, name='register'),
+	url(r'^upload/$', views.upload, name='upload'),
 	# url(r'^countries/add_country/$', views.add_country, name='add_country'),
 	# url(r'^countries/(?P<country_name_slug>[\w\-]+)/$', views.country, name='country'),
 	# url(r'^countries/(?P<country_name_slug>[\w\-]+)/add_policy/$', views.add_policy, name='add_policy'),

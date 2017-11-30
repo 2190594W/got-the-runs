@@ -19,7 +19,7 @@ def enablePrint():
 
 def populate():
     u = User.objects.get_or_create(username="admin")[0]
-    u.password = "bcrypt_sha256$$2b$12$Ev.9bbzm5eUStKgqVeonNObEDAywnE4Q/C1BbJkJbFqiyLPYj3yu6"
+    u.password = "argon2$argon2i$v=19$m=512,t=2,p=2$dXNNempMWE02T2p4$amQEn7mi4LjQ6WVal8sDtQ"
     u.is_superuser = 1
     u.first_name = "PolicyTracker"
     u.last_name = "Admin"

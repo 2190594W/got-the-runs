@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
-from running_app.models import UserProfile
+from running_app.models import UserProfile, GpxFile
 
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput())
@@ -27,6 +27,12 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ('website', 'picture')
+
+class GpxForm(forms.ModelForm):
+    class Meta:
+        model = GpxFile
+        fields = ('gpx_file',)
+
 
 # class CountryForm(forms.ModelForm):
 #     name = forms.CharField(max_length=128, widget=forms.TextInput(attrs={'placeholder': 'Please enter the country name'}))

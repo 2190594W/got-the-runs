@@ -1,5 +1,5 @@
 from django.contrib import admin
-from running_app.models import UserProfile
+from running_app.models import UserProfile, GpxFile
 
 # class CountryAdmin(admin.ModelAdmin):
 #     prepopulated_fields = {'slug':('name',)}
@@ -14,3 +14,4 @@ from running_app.models import UserProfile
 # admin.site.register(Policy, PolicyAdmin)
 # admin.site.register(Category)
 admin.site.register(UserProfile)
+admin.site.register(GpxFile)

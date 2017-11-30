@@ -5,7 +5,7 @@
     <span class="navbar-toggler-icon"></span>
   </button>
   <a class="navbar-brand" href="{% url 'home' %}" style="padding: 0 1rem;">
-		<img src="{% static '/images/GotTheRunsLogo.png' %}" width="150" class="d-inline-block align-top" alt="">
+		<img src="{% static '/images/GotTheRunsLogo2.png' %}" width="150" class="d-inline-block align-top" alt="">
 	</a>
 
   <div class="collapse navbar-collapse text-center" id="navbarSupportedContent" style="font-size: 150%;">
@@ -20,7 +20,7 @@
         <a class="nav-link {% if nbar == 'news' %}active{% endif %}" href="{% url 'news' %}">News</a>
       </li>
     </ul> -->
-    <ul class="navbar-nav ml-auto" style="margin-right: 5%;">
+    <ul class="navbar-nav ml-auto" style="margin-right: 5%; margin-top: -6.5%;">
 			{% if not user.is_authenticated %}
 				<li class="nav-item">
 	        <a class="nav-link" href="{% url 'login' %}">Login</a>

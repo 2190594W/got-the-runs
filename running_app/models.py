@@ -84,6 +84,16 @@ class UploadToPathAndRename(object):
         # return the whole path to the file
         return os.path.join(self.sub_path, filename)
 
+@deconstructible
+class UploadGPXAndRename(object):
+
+    def __call__(self, instance, filename):
+        ext = filename.split('.')[-1]
+        file_prefix = str(uuid.uuid4())[-12:]
+        filename = '{}.{}'.format(file_prefix, ext)
+        # return the whole path to the file
+        return "gpx_files/" + filename
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
@@ -97,81 +107,6 @@ class UserProfile(models.Model):
     def __unicode__(self):
         return self.user.username
 
-
-# class Country(models.Model):
-#     name = models.CharField(max_length=128, unique=True)
-#     demonym = models.CharField(max_length=128, unique=True)
-#     capital = models.CharField(max_length=128, unique=True)
-#     population = models.IntegerField()
-#     partyInPower = models.CharField(max_length=128)
-#     startDate = models.DateField()
-#     titleOfHead = models.CharField(max_length=128)
-#     headOfState = models.CharField(max_length=128)
-#     description = models.TextField(max_length=1024)
-#     background_image = models.ImageField(upload_to=UploadToPathAndRename(os.path.join(MEDIA_ROOT, 'country_images')), validators=[FileValidator(min_size=1*500, max_size=10*1024*1024, allowed_mimetypes=('image/png', 'image/jpg', 'image/jpeg',), allowed_extensions=('png', 'jpg', 'jpeg',))], blank = True)
-#     map_image = models.ImageField(upload_to=UploadToPathAndRename(os.path.join(MEDIA_ROOT, 'map_images')), validators=[FileValidator(min_size=1*500, max_size=10*1024*1024, allowed_mimetypes=('image/png', 'image/jpg', 'image/jpeg',), allowed_extensions=('png', 'jpg', 'jpeg',))], blank = True)
-#     slug = models.SlugField()
-#
-#     def save(self, *args, **kwargs):
-#         self.slug = slugify(self.name)
-#         rapi_country = rapi.get_countries_by_name(self.name)[0]
-#         self.demonym = rapi_country.demonym
-#         self.capital = rapi_country.capital
-#         self.population = rapi_country.population
-#         super(Country, self).save(*args, **kwargs)
-#         slug = models.SlugField(unique=True)
-#
-#     class Meta:
-#         verbose_name_plural = 'Countries'
-#
-#     def __str__(self):
-#         return self.name
-#
-#     def __unicode__(self):
-#         return self.name
-#
-#
-# class Category(models.Model):
-#     name = models.CharField(max_length=64)
-#     fa_icon = models.CharField(max_length=64)
-#     fa_colour = models.CharField(max_length=6)
-#
-#     class Meta:
-#         verbose_name_plural = 'Categories'
-#
-#     def __str__(self):
-#         return self.name
-#
-#     def __unicode__(self):
-#         return self.name
-#
-#
-# class Status(models.Model):
-#     name = models.CharField(max_length=64)
-#     fa_icon = models.CharField(max_length=64)
-#     fa_colour = models.CharField(max_length=6)
-#
-#     def __str__(self):
-#         return self.name
-#
-#     def __unicode__(self):
-#         return self.name
-#
-#
-# class Policy(models.Model):
-#     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-#     subject = models.CharField(max_length=128)
-#     description = models.TextField(max_length=1024)
-#     reference_url = models.URLField(blank=True)
-#     country = models.ForeignKey(Country)
-#     status = models.ForeignKey(Status)
-#     category = models.ForeignKey(Category)
-#
-#     class Meta:
-#         verbose_name_plural = 'Policies'
-#
-#     def __str__(self):
-#         return self.subject
-#
-#     def __unicode__(self):
-#         return self.subject
+class GpxFile(models.Model):
+    user_profile = models.ForeignKey(UserProfile)
+    gpx_file = models.FileField(upload_to=UploadGPXAndRename(os.path.join(MEDIA_ROOT, 'gpx_files')), max_length=300, validators=[FileValidator(min_size=1*500, max_size=10*1024*1024, allowed_mimetypes=('application/gpx+xml', 'application/octet-stream'), allowed_extensions=('gpx'))], blank = True)
