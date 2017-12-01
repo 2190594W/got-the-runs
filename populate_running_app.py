@@ -21,9 +21,9 @@ def populate():
     u = User.objects.get_or_create(username="admin")[0]
     u.password = "argon2$argon2i$v=19$m=512,t=2,p=2$dXNNempMWE02T2p4$amQEn7mi4LjQ6WVal8sDtQ"
     u.is_superuser = 1
-    u.first_name = "PolicyTracker"
+    u.first_name = "John"
     u.last_name = "Admin"
-    u.email = "admin@policy-tracker.co.uk"
+    u.email = "admin@got-the-runs.co.uk"
     u.is_staff = 1
     u.is_active = 1
     u.save()

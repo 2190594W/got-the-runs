@@ -49,6 +49,8 @@
 											}
 											$('#gpx{{forloop.counter}}').click(function() {
 												switchMap(detail, e);
+                                                $("path").css("stroke-opacity", "0.4");
+												$(".path{{forloop.counter}}").css("stroke-opacity", "1");
 											});
 											{% if forloop.first %}
 												switchMap(detail, e);

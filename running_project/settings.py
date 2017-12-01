@@ -184,7 +184,9 @@ SOCIAL_AUTH_LOGIN_REDIRECT_URL = "/"
 
 LEAFLET_CONFIG = {
     'TILES': [('Watercolor', 'http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg', {'attribution': ''}),
-              ('Standard', 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {'attribution': ''})],
+              ('Standard', 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {'attribution': ''}),
+              ('Terrain', 'http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}.png', {'attribution': ''}),
+              ('Toner', 'http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png', {'attribution': ''})],
     'MIN_ZOOM': 3,
     'MAX_ZOOM': 18,
     'DEFAULT_CENTER': [55.873753, -4.292492],

@@ -3,17 +3,25 @@
 {% load leaflet_tags %}
 {% block title_block %} - Home {% endblock %} {% block body_block %}
 <script type="text/javascript" src="../../static/javascript/jquery.leanModal.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js"></script>
+<script type="text/javascript">var pathData = {path1:{},path2:{},path3:{},path4:{},path5:{}}; var ele_x = {path1:[],path2:[],path3:[],path4:[],path5:[]}; var ele_y = {path1:[],path2:[],path3:[],path4:[],path5:[]}; var labels = {path1:[],path2:[],path3:[],path4:[],path5:[]};</script>
 <div id="wrapper" style="height: 100%;">
 	<div class="overlay" data-toggle="offcanvas" style="cursor: pointer;"></div>
 
 	<!-- Sidebar -->
 	<div class="navbar navbar-override navbar-inverse navbar-fixed-top" id="sidebar-wrapper" role="navigation">
 		<ul class="sidebar-nav">
-			<li class="sidebar-brand" style="padding-bottom: 150px; text-align: center; margin-bottom: 60px; background-color: #1a1a1a;">
+			<li class="sidebar-brand" style="padding-bottom: 150px; text-align: center; {% if user.is_authenticated %}margin-bottom: 125px;{% else %}margin-bottom: 60px;{% endif %} background-color: #1a1a1a;">
 				<img src="{% static '/images/GotTheRunsLogo.png' %}" width="150" alt="Got the Runs? Logo" style="margin-top: 20px;">
-				<a href="{% url 'home' %}" style="padding: 10px 0;">
-					Got The Runs?
-				</a>
+				{% if user.is_authenticated %}
+					<a href="{% url 'home' %}" style="padding: 20px 0; margin-bottom: 10px">
+						{{ user.first_name }} {{ user.last_name }},<br/>have you Got The Runs?
+					</a>
+				{% else %}
+					<a href="{% url 'home' %}" style="padding: 10px 0;">
+						Got The Runs?
+					</a>
+				{% endif %}
 			</li>
 			<li>
 				<a href="{% url 'home' %}">Home</a>
@@ -21,9 +29,11 @@
 			<li>
 				<a href="{% url 'about' %}">About</a>
 			</li>
-			<li>
-				<a href="{% url 'suggestions' %}">Suggest new Runs</a>
-			</li>
+			{% if user.is_authenticated %}
+				<li>
+					<a href="{% url 'suggestions' %}">Suggest new Runs</a>
+				</li>
+			{% endif %}
 			<li class="dropdown">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Runs<span class="caret"></span></a>
 				<ul class="dropdown-menu" role="menu" style="margin-bottom: 10px">
@@ -36,22 +46,26 @@
 									window.addEventListener("map:init", function(e) {
 										var detail = e.detail;
 										var gpx = 'media/{{ gpx.gpx_file }}'; // URL to your GPX file or the GPX itself
-										new L.GPX(gpx, {
+										var gpx{{forloop.counter}} = new L.GPX(gpx, {
+											id: "path{{forloop.counter}}",
 											async: true,
 											marker_options: {
 												startIconUrl: 'static/images/pin-icon-start.png',
 												endIconUrl: 'static/images/pin-icon-end.png',
 												shadowUrl: 'static/images/pin-shadow.png'
 											},
-											polyline_options: {weight: 5, color: "{% cycle 'rgba(236, 27, 90, 0.8)' 'rgba(49, 65, 144, 0.8)' 'rgba(125, 93, 129, 0.8)' 'rgba(45, 35, 102, 0.8)' 'rgba(1, 168, 21, 0.8)' %}"}
+											polyline_options: {className: "path{{forloop.counter}}", weight: 5, color: "{% cycle 'rgba(236, 27, 90, 0.8)' 'rgba(49, 65, 144, 0.8)' 'rgba(125, 93, 129, 0.8)' 'rgba(45, 35, 102, 0.8)' 'rgba(1, 168, 21, 0.8)' %}"}
 										}).on('loaded', function(e) {
 											if (e.target.get_name().length > 20) {
 												document.getElementById('gpx{{forloop.counter}}').innerHTML = "Run {{forloop.counter}}: " + e.target.get_name().substring(0, 20) + "...";
 											} else {
 												document.getElementById('gpx{{forloop.counter}}').innerHTML = "Run {{forloop.counter}}: " + e.target.get_name();
 											}
+											processData(e, "path{{forloop.counter}}");
 											$('#gpx{{forloop.counter}}').click(function() {
 												switchMap(detail, e);
+												$("path").css("stroke-opacity", "0.4");
+												$(".path{{forloop.counter}}").css("stroke-opacity", "1");
 											});
 											{% if forloop.first %}
 												switchMap(detail, e);
@@ -72,6 +86,9 @@
 			{% if user.is_authenticated %}
 				<li>
 					<a href="{% url 'upload' %}">Upload Run File</a>
+				</li>
+				<li>
+					<a id="modal_trigger3" href="#modal2">Analytics</a>
 				</li>
 				<li>
 					<a href="{% url 'profile_settings' %}">Settings</a>
@@ -116,13 +133,13 @@
 			  {% csrf_token %}
 			  <div style="color: red">{{ error }}</div><br/>
 			  {% if username %}
-				<input type="text" name="username" size="30" value="{{ username }}" class="login-inputs"/>
+				<input type="text" name="username" size="30" value="{{ username }}" autocomplete="username" class="login-inputs"/>
 				<br/><br/>
-				<input type="password" name="password" value="" placeholder="Password" size="30" autofocus class="login-inputs"/> <br />
+				<input type="password" name="password" value="" placeholder="Password" size="30" autocomplete="current-password" autofocus class="login-inputs"/> <br />
 			  {% else %}
-				<input type="text" name="username" size="30" placeholder="Username" autofocus class="login-inputs"/>
+				<input type="text" name="username" size="30" placeholder="Username" autocomplete="username" autofocus class="login-inputs"/>
 				<br/><br/>
-				<input type="password" name="password" placeholder="Password" size="30" class="login-inputs"/> <br />
+				<input type="password" name="password" placeholder="Password" size="30" autocomplete="current-password" class="login-inputs"/> <br />
 			  {% endif %}
 			  <br/>
 			  <input class="btn btn-success login-btn" type="submit"/>
@@ -154,12 +171,62 @@
 	  </div>
 	</div>
 
+	<div id="modal2" class="popupContainer col-md-10" style="display:none; padding:0; left: 0 !important;">
+		<div class="col-md-12 login-box">
+			<div class="row">
+			    <div class="col-md-6 login-left">
+					<canvas id="eleChart" width="400" height="400"></canvas>
+			    </div>
+			    <div class="col-md-6 text-center login-right">
+
+				</div>
+			</div>
+	    </div>
+	</div>
+	<script>
+		function graphData() {
+			var ctx = document.getElementById("eleChart").getContext('2d');
+			var keys = Object.keys(ele_y);
+			var eleChart = new Chart(ctx, {
+				type: 'line',
+				data: {
+					labels: ele_x[keys[0]],
+					datasets:[{
+						data: ele_y[keys[0]],
+						label: "Elevation of Run 1",
+						backgroundColor: "rgba(236, 27, 90, 0.6)",
+						borderColor: "rgb(236, 27, 90)",
+						fill: 'origin',
+					}],
+				},
+				options: {
+			        scales:{
+			            yAxes: [{
+							scaleLabel: {
+						        display: true,
+						        labelString: "Elevation in metres"
+						    },
+			            }],
+						xAxes: [{
+							scaleLabel: {
+						        display: true,
+						        labelString: "Distance along route in km"
+						    },
+						}]
+			        }
+			    },
+			});
+		}
+		$('#modal_trigger3').click(graphData());
+	</script>
+
 </div>
 <!-- /#wrapper -->
 
 <script type="text/javascript">
 	$("#modal_trigger").leanModal({top : 200, overlay : 0.6, closeButton: ".modal_close" });
 	$("#modal_trigger2").leanModal({top : 200, overlay : 0.6, closeButton: ".modal_close" });
+	$("#modal_trigger3").leanModal({top : 200, overlay : 0.6, closeButton: ".modal_close" });
 	function kFormatter(num) {
 		return num > 999 ? (num / 1000).toFixed(2) + "km" : num + "m"
 	}
@@ -173,6 +240,30 @@
 		} else {
 			document.getElementById('total_speed').innerHTML = "Track Speed: " + e.target.get_total_speed().toFixed(2) + "km/h (" + e.target.get_total_speed_imp().toFixed(2) + "mph)";
 		}
+	}
+	function processData(e, counter) {
+		var thisPath = pathData[counter];
+		thisPath["dist_m"] = e.target.get_distance();
+		thisPath["dist_imp"] = e.target.get_distance_imp();
+		thisPath["speed_m"] = e.target.get_total_speed();
+		thisPath["speed_imp"] = e.target.get_total_speed_imp();
+		thisPath['ele_min'] = e.target.get_elevation_min();
+		thisPath['ele_max'] = e.target.get_elevation_max();
+		thisPath["ele_g_m"] = e.target.get_elevation_gain();
+		thisPath["ele_l_m"] = e.target.get_elevation_loss();
+		thisPath["ele_g_imp"] = e.target.get_elevation_gain_imp();
+		thisPath["ele_l_imp"] = e.target.get_elevation_loss_imp();
+		if (thisPath["ele_min"] != null && thisPath["ele_max"] != 0) {
+			thisPath["ele_data"] = e.target.get_elevation_data();
+			for(var i=0; i<thisPath.ele_data.length; i++){
+				ele_x[counter].push(thisPath.ele_data[i][0].toFixed(2));
+				ele_y[counter].push(thisPath.ele_data[i][1]);
+			};
+			labels[counter] = Array(ele_x[counter].length).fill().map((d, i) => i);
+		} else {
+			thisPath["ele_data"] = null;
+		}
+		console.log(thisPath);
 	}
 	window.addEventListener("map:init", function(e) {
 		var detail = e.detail;
