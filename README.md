@@ -22,7 +22,7 @@ Run the following command to install the correct dependencies:
 pip install -r requirements.txt
 ```
 
-### After the module has been installed you need to download the config.pyc file provided via Slack (or other means) and place it in the running_project directory next to the settings.pyc file. This config file is vital in providing the correct credentials for OAuth2 configuration as it provides the application keys and secrets from Google, Facebook, Twitter and GitHub.
+### After the module has been installed, you need to download the config.pyc file provided via Slack (or other means) and place it in the running_project directory next to the settings.pyc file. This config file is vital in providing the correct credentials for OAuth2 configuration as it provides the application keys and secrets from Google, Facebook, Twitter and GitHub.
 
 With the `config.pyc` file in the correct location, you can safely run the application with:
 
@@ -35,7 +35,7 @@ python manage.py runserver
 Then just navigate to <http://localhost:8000> or <http://127.0.0.1:8000>.
 
 ## OAuth2 APIs
-Login via OAuth2 APIs is implemented through the social-auth-app-django module for Django that you have manually installed with Pip.
+Login via OAuth2 APIs is implemented through the social-auth-app-django module for Django.
 
 Currently, a basic template Home HTML file is used with little functionality. However, on the Home Page there are four links to allow a User to login with Google, Facebook, Twitter or GitHub. Standard Django login/registration is not yet implemented.
 
@@ -52,4 +52,4 @@ If the user is not logged in and they attempt to access the above page, the app 
 
 ### When developing the application, always commit to a new branch that is based off of the 'Development' branch. That way any commits can be reviewed for errors/clashes before being pulled into the main 'Development' branch. Periodically, we will update the 'Master' branch to reflect the changes of the 'Development' branch.
 
-### When developing, it useful to be able to easily see the contents of the database (db.sqlite3 file). As such you should download the "DB Browser for SQLite" application <http://sqlitebrowser.org/>. It is an exceptionally lightweight and easy-to-use DB Browser and only requires launching the application and selecting "Open Database" in the top righthand corner. Then just browse to the application's `db.sqlite3` file.
+### When developing, it useful to be able to easily see the contents of the database (db.sqlite3 file). As such you should download the "DB Browser for SQLite" application <https://sqlitebrowser.org/>. It is a lightweight and easy-to-use DB Browser and only requires launching the application and selecting "Open Database" in the top righthand corner. Then just browse to the application's `db.sqlite3` file.
